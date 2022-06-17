@@ -1,5 +1,6 @@
 #include <chrono>
 #include <memory>
+#include <iostream>
 
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
@@ -13,6 +14,9 @@ using namespace std::chrono_literals;
 class MinimalPublisher : public rclcpp::Node {
 public:
     MinimalPublisher() : Node("minimal_publisher"), count_(0) {
+        this->declare_parameter<std::string>("some_param", "default");
+        auto param = this->get_parameter("some_param");
+        std::cout << param.as_string() << std::endl;
         publisher_ = create_publisher<std_msgs::msg::String>("topic", 10);
         auto timer_callback = [this]() -> void {
             auto message = std_msgs::msg::String();

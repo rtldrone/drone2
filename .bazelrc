@@ -1,3 +1,4 @@
 build --incompatible_enable_cc_toolchain_resolution
 build --spawn_strategy=local
 build --cxxopt='-std=c++17'
+build -c opt
