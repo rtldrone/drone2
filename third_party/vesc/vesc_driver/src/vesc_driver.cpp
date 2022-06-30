@@ -49,8 +49,8 @@ using std_msgs::msg::Float64;
 using vesc_msgs::msg::VescStateStamped;
 using sensor_msgs::msg::Imu;
 
-VescDriver::VescDriver(const rclcpp::NodeOptions & options)
-: rclcpp::Node("vesc_driver", options),
+VescDriver::VescDriver(const std::string& namespace_, const rclcpp::NodeOptions & options)
+: rclcpp::Node("vesc_driver", namespace_, options),
   vesc_(
     std::string(),
     std::bind(&VescDriver::vescPacketCallback, this, _1),

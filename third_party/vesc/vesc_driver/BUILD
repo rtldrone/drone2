@@ -1,7 +1,19 @@
 cc_library(
     name = "vesc_driver",
-    srcs = glob(["src/*.cpp"]),
-    hdrs = glob(["include/vesc_driver/*.hpp"]),
+    srcs = [
+        "src/vesc_driver.cpp",
+        "src/vesc_interface.cpp",
+        "src/vesc_packet.cpp",
+        "src/vesc_packet_factory.cpp",
+    ],
+    hdrs = [
+        "include/vesc_driver/crc.hpp",
+        "include/vesc_driver/datatypes.hpp",
+        "include/vesc_driver/vesc_driver.hpp",
+        "include/vesc_driver/vesc_interface.hpp",
+        "include/vesc_driver/vesc_packet.hpp",
+        "include/vesc_driver/vesc_packet_factory.hpp",
+    ],
     includes = ["include"],
     visibility = ["//visibility:public"],
     deps = [

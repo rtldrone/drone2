@@ -58,7 +58,7 @@ class VescDriver
   : public rclcpp::Node
 {
 public:
-  explicit VescDriver(const rclcpp::NodeOptions & options);
+  explicit VescDriver(const std::string& namespace_, const rclcpp::NodeOptions & options);
 
 private:
   // interface to the VESC
