@@ -55,6 +55,10 @@ UDP_MSGS_VERSION = "0.0.3"
 
 TRANSPORT_DRIVERS_VERSION = "1.1.1"
 
+STB_VERSION = "f67165c2bb2af3060ecae7d20d6f731173485ad0"
+
+WEBOTS_VERSION = "R2022a"
+
 http_archive(
     name = "asio",
     build_file = "@//:repository/asio.BUILD",
@@ -78,3 +82,32 @@ http_archive(
     strip_prefix = "transport_drivers-%s" % TRANSPORT_DRIVERS_VERSION,
     urls = ["https://github.com/ros-drivers/transport_drivers/archive/refs/tags/%s.tar.gz" % TRANSPORT_DRIVERS_VERSION],
 )
+
+http_archive(
+    name = "stb",
+    build_file = "@//:repository/stb.BUILD",
+    sha256 = "1d1035301f384c8eb1058adf39e233d2eba362e9c3a018e992d2bdd351bce846",
+    strip_prefix = "stb-%s" % STB_VERSION,
+    urls = ["https://github.com/nothings/stb/archive/%s.zip" % STB_VERSION],
+)
+
+http_archive(
+    name = "webots",
+    build_file = "@//:repository/webots.BUILD",
+    sha256 = "535eff456eb24d58cbd23201ffcf8c640b6512b0e64fd19ef059bf210725eef3",
+    strip_prefix = "webots-%s" % WEBOTS_VERSION,
+    urls = ["https://github.com/cyberbotics/webots/archive/refs/tags/%s.tar.gz" % WEBOTS_VERSION],
+)
+
+# Hedron's Compile Commands Extractor for Bazel
+# https://github.com/hedronvision/bazel-compile-commands-extractor
+http_archive(
+    name = "hedron_compile_commands",
+    sha256 = "021e3c42b3df88702caf3299d33e2a6f2e84da9e7f24707a0cf5815feba2d4a2",
+    strip_prefix = "bazel-compile-commands-extractor-4bb5e4afc049117154e8fb2a7c71b9eaf4db7547",
+    url = "https://github.com/hedronvision/bazel-compile-commands-extractor/archive/4bb5e4afc049117154e8fb2a7c71b9eaf4db7547.tar.gz",
+)
+
+load("@hedron_compile_commands//:workspace_setup.bzl", "hedron_compile_commands_setup")
+
+hedron_compile_commands_setup()
