@@ -18,3 +18,9 @@ cc_binary(
         "@ros2_rclcpp//:rclcpp",
     ],
 )
+
+cc_binary(
+    name = "empty",
+    srcs = ["empty.cc"],
+    deps = ["@webots//:controller_cpp"],
+)
