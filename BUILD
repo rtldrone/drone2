@@ -22,5 +22,9 @@ cc_binary(
 cc_binary(
     name = "empty",
     srcs = ["empty.cc"],
+    linkopts = [
+        "-lrt",
+        "-ldl",
+    ],
     deps = ["@webots//:controller_cpp"],
 )

@@ -1,5 +1,12 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
+http_archive(
+    name = "arm64_debian_rootfs",
+    build_file = "@//:repository/debian_rootfs.BUILD",
+    sha256 = "7e6ad432fec0a36f8b66c3fc2ab8795ea446e61f7dce7a206b55602677cf0904",
+    url = "https://www.frc971.org/Build-Dependencies/2021-10-30-raspios-bullseye-arm64-lite_rootfs.tar.bz2",
+)
+
 BAZEL_TOOLCHAIN_TAG = "0.7.1"
 
 BAZEL_TOOLCHAIN_SHA = "97853d0b2a725f9eb3f5c2cc922e86a69afb35a01b52a69b4f864eaf9f3c4f40"
@@ -21,9 +28,9 @@ load("@com_grail_bazel_toolchain//toolchain:rules.bzl", "llvm_toolchain")
 llvm_toolchain(
     name = "llvm_toolchain",
     llvm_version = "13.0.0",
-    #    sysroot = {
-    #        "linux-aarch64": "@arm64_debian_rootfs//:sysroot_files",
-    #    },
+    sysroot = {
+        "linux-aarch64": "@arm64_debian_rootfs//:sysroot_files",
+    },
 )
 
 load("@llvm_toolchain//:toolchains.bzl", "llvm_register_toolchains")
@@ -58,6 +65,8 @@ TRANSPORT_DRIVERS_VERSION = "1.1.1"
 STB_VERSION = "f67165c2bb2af3060ecae7d20d6f731173485ad0"
 
 WEBOTS_VERSION = "R2022a"
+
+LIBGPIOD_VERSION = "1.6.3"
 
 http_archive(
     name = "asio",
@@ -97,6 +106,14 @@ http_archive(
     sha256 = "535eff456eb24d58cbd23201ffcf8c640b6512b0e64fd19ef059bf210725eef3",
     strip_prefix = "webots-%s" % WEBOTS_VERSION,
     urls = ["https://github.com/cyberbotics/webots/archive/refs/tags/%s.tar.gz" % WEBOTS_VERSION],
+)
+
+http_archive(
+    name = "gpiod",
+    build_file = "@//:repository/gpiod.BUILD",
+    sha256 = "eb446070be1444fd7d32d32bbca53c2f3bbb0a21193db86198cf6050b7a28441",
+    strip_prefix = "libgpiod-%s" % LIBGPIOD_VERSION,
+    urls = ["https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/snapshot/libgpiod-%s.tar.gz" % LIBGPIOD_VERSION],
 )
 
 # Hedron's Compile Commands Extractor for Bazel
