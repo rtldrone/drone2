@@ -28,14 +28,22 @@ load("@com_grail_bazel_toolchain//toolchain:rules.bzl", "llvm_toolchain")
 llvm_toolchain(
     name = "llvm_toolchain",
     llvm_version = "13.0.0",
-    sysroot = {
-        "linux-aarch64": "@arm64_debian_rootfs//:sysroot_files",
-    },
 )
 
 load("@llvm_toolchain//:toolchains.bzl", "llvm_register_toolchains")
 
 llvm_register_toolchains()
+
+llvm_toolchain(
+    name = "llvm_aarch64",
+    llvm_version = "13.0.0",
+    sysroot = {
+        "linux-aarch64": "@arm64_debian_rootfs//:sysroot_files",
+    },
+    toolchain_roots = {
+        "": "@llvm_toolchain_llvm//",
+    },
+)
 
 ROS2BAZEL_COMMIT = "7d844216347017cab7c6d7b6bb3bfeb1c90f9b75"
 

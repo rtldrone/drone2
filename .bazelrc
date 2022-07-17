@@ -4,4 +4,5 @@ build --cxxopt='-std=c++17'
 build -c opt
 
 build:pi --platforms=@com_grail_bazel_toolchain//platforms:linux-aarch64
+build:pi --extra_toolchains=@llvm_aarch64//:cc-toolchain-aarch64-linux
 build:pi --platform_suffix=pi
