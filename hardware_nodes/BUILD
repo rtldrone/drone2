@@ -7,13 +7,26 @@ ros2_all_interface_libraries(
 )
 
 cc_library(
-    name = "stacklight_node_neopi3",
+    name = "stacklight_node_neo3",
     srcs = ["neo_3_stacklight_node.cc"],
     hdrs = ["neo_3_stacklight_node.h"],
     visibility = ["//visibility:public"],
+    target_compatible_with = ["@platforms//os:linux"],
     deps = [
         ":stacklight_state_msg_cpp",
         "@gpiod",
+        "@ros2_rclcpp//:rclcpp",
+    ],
+)
+
+cc_library(
+    name = "maxbotix_ultrasonic_node",
+    srcs = ["maxbotix_ultrasonic_node.cc"],
+    hdrs = ["maxbotix_ultrasonic_node.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "@asio",
+        "@ros2_common_interfaces//:sensor_msgs_cpp",
         "@ros2_rclcpp//:rclcpp",
     ],
 )

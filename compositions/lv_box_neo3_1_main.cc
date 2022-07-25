@@ -3,7 +3,7 @@
 //
 
 #include <rclcpp/rclcpp.hpp>
-#include "peripherals/neo_3_stacklight_node.h"
+#include "hardware_nodes/neo_3_stacklight_node.h"
 
 int main(int argc, char* argv[]) {
   rclcpp::init(argc, argv);
