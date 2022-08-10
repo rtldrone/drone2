@@ -15,3 +15,12 @@ cc_binary(
         "@ros2_rclcpp//:rclcpp",
     ],
 )
+
+cc_binary(
+    name = "hv_box_neo3",
+    srcs = ["hv_box_neo3_main.cc"],
+    deps = [
+        "@ros2_rclcpp//:rclcpp",
+        "//third_party/vesc/vesc_driver"
+    ]
+)
