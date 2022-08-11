@@ -1,0 +1,6 @@
+{
+  "appId": "edu.vt.cvess.drone2hmi",
+  "appName": "drone2hmi",
+  "webDir": "public",
+  "bundledWebRuntime": false
+}

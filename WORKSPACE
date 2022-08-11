@@ -124,6 +124,17 @@ http_archive(
     urls = ["https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/snapshot/libgpiod-%s.tar.gz" % LIBGPIOD_VERSION],
 )
 
+http_archive(
+    name = "websocketpp",
+    build_file = "@//:repository/websocketpp.BUILD",
+    sha256 = "0281b1d1278f01138805279fd2277901ae3c71b76e28364575356061098111c6",
+    strip_prefix = "websocketpp-0.8.2",
+    urls = [
+        "https://github.com/zaphoyd/websocketpp/archive/refs/tags/0.8.2.zip"
+    ],
+)
+
+
 # Hedron's Compile Commands Extractor for Bazel
 # https://github.com/hedronvision/bazel-compile-commands-extractor
 http_archive(

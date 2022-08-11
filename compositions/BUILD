@@ -24,3 +24,21 @@ cc_binary(
         "//third_party/vesc/vesc_driver"
     ]
 )
+
+cc_binary(
+    name = "hv_box_neo3_hmi",
+    srcs = ["hv_box_neo3_hmi_main.cc"],
+    deps = [
+        "@ros2_rclcpp//:rclcpp",
+        "//hmi:hmi_node"
+    ]
+)
+
+cc_binary(
+    name = "service_test",
+    srcs = ["service_test.cc"],
+    deps = [
+        "@ros2_rclcpp//:rclcpp",
+        "@ros2_common_interfaces//:std_srvs_cpp"
+    ]
+)

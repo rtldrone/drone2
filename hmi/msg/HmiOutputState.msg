@@ -1,0 +1,2 @@
+bool forward
+bool disable_sensors
