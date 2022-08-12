@@ -11,7 +11,7 @@ if (typeof document.hidden !== "undefined") {
     hidden = "webkitHidden";
 }
 
-const socket = new ReconnectingWebSocket("ws://10.0.2.30:8082");
+const socket = new ReconnectingWebSocket("ws://192.168.88.2:8082");
 socket.addEventListener('message', onMessage);
 
 function tick() {

@@ -1,5 +1,5 @@
 <script>
-    import {forward, reverse, speed, sendSpeedUpCommand, sendSpeedDownCommand} from "./stores";
+    import {forward, speed, sendSpeedUpCommand, sendSpeedDownCommand} from "./stores";
 
 
 
