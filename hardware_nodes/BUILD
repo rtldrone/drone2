@@ -20,6 +20,18 @@ cc_library(
 )
 
 cc_library(
+    name = "safety_node_neo3",
+    srcs = ["neo_3_safety_node.cc"],
+    hdrs = ["neo_3_safety_node.h"],
+    visibility = ["//visibility:public"],
+    target_compatible_with = ["@platforms//os:linux"],
+    deps = [
+        "@ros2_rclcpp//:rclcpp",
+        "@ros2_common_interfaces//:std_srvs_cpp"
+    ],
+)
+
+cc_library(
     name = "maxbotix_ultrasonic_node",
     srcs = ["maxbotix_ultrasonic_node.cc"],
     hdrs = ["maxbotix_ultrasonic_node.h"],

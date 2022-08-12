@@ -39,6 +39,7 @@ cc_binary(
     srcs = ["hv_box_neo3_controller_main.cc"],
     deps = [
         "//controller:controller_node",
+        "//hardware_nodes:safety_node_neo3",
         "//hmi:hmi_node",
         "@ros2_rclcpp//:rclcpp",
     ],
