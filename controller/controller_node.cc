@@ -4,11 +4,11 @@ using namespace std::chrono_literals;
 
 ControllerNode::ControllerNode(const std::string& ns, const rclcpp::NodeOptions& options)
     : rclcpp::Node("controller", ns, options),
-      profiler(VEHICLE_ACCEL_M_PER_S2),
       red_blinker(10),
       green_blinker(10),
       orange_blinker(10),
-      blue_blinker(10) {
+      blue_blinker(10),
+      profiler(VEHICLE_ACCEL_M_PER_S2) {
   using hmi_msgs::msg::HmiInputState;
   using hmi_msgs::msg::HmiOutputState;
   using sensor_msgs::msg::Range;
@@ -41,36 +41,45 @@ ControllerNode::ControllerNode(const std::string& ns, const rclcpp::NodeOptions&
       });
   hmi_speed_up_service = create_service<Trigger>(
       "/hmi/speed_up", [this](std::shared_ptr<Trigger::Request> request, std::shared_ptr<Trigger::Response> response) {
-        if (hmi_goal_mph == 0)  // Prevent going to 1 mph
-          hmi_goal_mph = 2;
-        else
-          hmi_goal_mph++;
+        hmi_goal_mph += SPEED_INCREMENT_MPH;
         if (hmi_goal_mph > MAX_SPEED_MPH) hmi_goal_mph = MAX_SPEED_MPH;
+        if (std::abs(hmi_goal_mph) < SPEED_INCREMENT_MPH) hmi_goal_mph = 0;
         clear_stop_conditions();
         response->success = true;
       });
   hmi_speed_down_service = create_service<Trigger>(
       "/hmi/speed_down",
       [this](std::shared_ptr<Trigger::Request> request, std::shared_ptr<Trigger::Response> response) {
-        if (hmi_goal_mph == 2)  // Prevent going to 1 mph
-          hmi_goal_mph = 0;
-        else
-          hmi_goal_mph--;
+        hmi_goal_mph -= SPEED_INCREMENT_MPH;
         if (hmi_goal_mph < 0) hmi_goal_mph = 0;
+        if (std::abs(hmi_goal_mph) < SPEED_INCREMENT_MPH) hmi_goal_mph = 0;
         response->success = true;
       });
+
+  safety_client = create_client<Trigger>("/safety/update");
 
   vesc_speed_publisher = create_publisher<Float64>("/motor/commands/motor/speed", 10);
   stacklight_state_publisher = create_publisher<StacklightState>("/stacklight/state", 10);
   hmi_input_publisher = create_publisher<HmiInputState>("/hmi/input", 10);
 
+  last_safety_update = std::chrono::steady_clock::now();
+  last_hmi_update = std::chrono::steady_clock::now();
   timer = create_wall_timer(UPDATE_RATE, [this]() { on_timer(); });
 }
 
 void ControllerNode::on_timer() {
   // Update estop
+  auto safety_request = std::make_shared<std_srvs::srv::Trigger::Request>();
+  auto result = safety_client->async_send_request(safety_request,
+                                                  [this](rclcpp::Client<std_srvs::srv::Trigger>::SharedFuture future) {
+                                                    is_estopped = !future.get()->success;
+                                                    last_safety_update = std::chrono::steady_clock::now();
+                                                  });
+
   if (is_estopped) {
     stopped_due_to_estop = true;
+    hmi_goal_mph = 0;
+    profiler.reset();
   }
 
   // Decide which distance sensor to read from the callback
@@ -107,6 +116,10 @@ void ControllerNode::on_timer() {
 
   // Send data to HMI
   auto hmi_message = std::make_unique<hmi_msgs::msg::HmiInputState>();
+  if (now - last_safety_update > SAFETY_TIMEOUT) {
+    hmi_message->diagnostics.push_back("Cannot communicate with safety controller, E-stop status may be inaccurate");
+  }
+
   if (hmi_sensor_override) {
     hmi_message->diagnostics.push_back("WARNING: Distance sensors are DISABLED");
   }
@@ -117,7 +130,10 @@ void ControllerNode::on_timer() {
     hmi_message->diagnostics.push_back("The vehicle was stopped due to a loss of HMI connection");
   }
   if (stopped_due_to_estop) {
-    hmi_message->diagnostics.push_back("The vehicle was stopped due to an E-Stop activation");
+    hmi_message->diagnostics.push_back("The vehicle was stopped due to an E-Stop");
+  }
+  if (is_estopped) {
+    hmi_message->diagnostics.push_back("The vehicle is E-Stopped");
   }
 
   hmi_message->speed_setpoint = hmi_goal_mph;

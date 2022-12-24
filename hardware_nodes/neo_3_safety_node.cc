@@ -5,7 +5,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
-Neo3SafetyNode::Neo3SafetyNode(const std::string& ns, const rclcpp::NodeOptions& options) : rclcpp::Node(ns, options) {
+Neo3SafetyNode::Neo3SafetyNode(const std::string& ns, const rclcpp::NodeOptions& options) : rclcpp::Node("safety", ns, options) {
   i2c_fd = open("/dev/i2c-0", O_RDWR);
 
   if (i2c_fd < 0) {
@@ -13,7 +13,7 @@ Neo3SafetyNode::Neo3SafetyNode(const std::string& ns, const rclcpp::NodeOptions&
     throw std::runtime_error("error opening i2c");
   }
 
-  if (ioctl(i2c_fd, I2C_SLAVE, 0x42) < 0) {
+  if (ioctl(i2c_fd, I2C_SLAVE, 21) < 0) {
     RCLCPP_FATAL(get_logger(), "Error setting i2c slave!\n");
     throw std::runtime_error("ioctl error");
   }
@@ -31,6 +31,6 @@ Neo3SafetyNode::Neo3SafetyNode(const std::string& ns, const rclcpp::NodeOptions&
       });
 }
 
-Neo3SafetyNode::~Neo3SafetyNode() {
+Neo3SafetyNode::~Neo3SafetyNode() noexcept {
   if (i2c_fd) close(i2c_fd);
 }

@@ -38,6 +38,8 @@ class ControllerNode : public rclcpp::Node {
   std::shared_ptr<rclcpp::Service<std_srvs::srv::Trigger>> hmi_speed_up_service;
   std::shared_ptr<rclcpp::Service<std_srvs::srv::Trigger>> hmi_speed_down_service;
 
+  std::shared_ptr<rclcpp::Client<std_srvs::srv::Trigger>> safety_client;
+
   std::shared_ptr<rclcpp::TimerBase> timer;
 
   void on_timer();
@@ -52,11 +54,11 @@ class ControllerNode : public rclcpp::Node {
   }
 
   inline double erpm_to_m_per_s(double erpm) {
-    return erpm * 2.0 * M_PI * WHEEL_RADIUS_M / 7.0 / 60.0;
+    return erpm * GEAR_RATIO * 2.0 * M_PI * WHEEL_RADIUS_M / 7.0 / 60.0;
   }
 
   inline double m_per_s_to_erpm(double m_per_s) {
-    return m_per_s / 2.0 / M_PI / WHEEL_RADIUS_M * 7.0 * 60.0;
+    return m_per_s / GEAR_RATIO / 2.0 / M_PI / WHEEL_RADIUS_M * 7.0 * 60.0;
   }
 
   inline double m_per_s_to_mph(double m_per_s) {
@@ -68,20 +70,22 @@ class ControllerNode : public rclcpp::Node {
   }
 
   // Vehicle constants
-  static constexpr double WHEEL_RADIUS_M = 0.041275;
+  static constexpr double WHEEL_RADIUS_M = 0.0417;
   static constexpr double GEAR_RATIO = (16.0 / 36.0) * (18.0 / 36.0);
-  static constexpr double VEHICLE_ACCEL_M_PER_S2 = 1;
-  static constexpr int MAX_SPEED_MPH = 20;
-  static constexpr double CURRENT_DRAW_WARN_THRESH = 5.0;
-  static constexpr double CURRENT_DRAW_CRITICAL_THRESH = 36.0;
+  static constexpr double VEHICLE_ACCEL_M_PER_S2 = 0.25;
+  static constexpr int MAX_SPEED_MPH = 15;
+  static constexpr double CURRENT_DRAW_WARN_THRESH = 10.0;
+  static constexpr double CURRENT_DRAW_CRITICAL_THRESH = 20.0;
   static constexpr double BATTERY_VOLT_WARN_THRESH = 39.72;
-  static constexpr double BATTERY_VOLT_CRITICAL_THRESH = 28.0;
+  static constexpr double BATTERY_VOLT_CRITICAL_THRESH = 36.0;
   static constexpr double DISTANCE_WARN_FACTOR = 1.5;
   static constexpr double DISTANCE_CRITICAL_FACTOR = 1.1;
   static constexpr double DISTANCE_OFFSET_M = 2.0;
+  static constexpr float SPEED_INCREMENT_MPH = 0.5;
 
   static constexpr auto UPDATE_RATE = std::chrono::milliseconds(50);
   static constexpr auto HMI_TIMEOUT = std::chrono::milliseconds(1000);
+  static constexpr auto SAFETY_TIMEOUT = std::chrono::milliseconds(1000);
 
   // Vehicle state variables
   double front_range_m = 0;
@@ -94,10 +98,11 @@ class ControllerNode : public rclcpp::Node {
 
   bool hmi_forward = true;
   bool hmi_sensor_override = false;
-  int hmi_goal_mph = 0;
+  float hmi_goal_mph = 0;
   std::chrono::time_point<std::chrono::steady_clock> last_hmi_update;
+  std::chrono::time_point<std::chrono::steady_clock> last_safety_update;
 
-  bool is_estopped = true;
+  bool is_estopped = false;
 
 
   VelocityProfiler profiler;

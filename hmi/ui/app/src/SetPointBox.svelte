@@ -11,6 +11,8 @@
         $forward = true;
     }
 
+    let nf = new Intl.NumberFormat('en-US', { minimumIntegerDigits: 2, minimumFractionDigits: 1, maximumFractionDigits: 1});
+
 </script>
 
 <svg width=500 height=300 class="fixed">
@@ -37,8 +39,8 @@
    REV
 </button>
 
-<div class="text-7xl mt-[100px] ml-[203px] fixed font-bold text-primary">
-    {(($speed.toString().length<=1) ? "0"+$speed.toString() : $speed.toString())}
+<div class="text-7xl mt-[100px] ml-[168px] fixed font-bold text-primary">
+    {nf.format($speed)}
 </div>
 
 <button class="btn {(($forward) ? '' : 'btn-outline')} btn-primary fixed w-[125px] h-[65px] mt-[220px] ml-[290px] border-4 text-2xl font-bold" on:click={forwardButton}>

@@ -25,6 +25,7 @@ cc_library(
     hdrs = ["neo_3_safety_node.h"],
     visibility = ["//visibility:public"],
     target_compatible_with = ["@platforms//os:linux"],
+    alwayslink = True,
     deps = [
         "@ros2_rclcpp//:rclcpp",
         "@ros2_common_interfaces//:std_srvs_cpp"

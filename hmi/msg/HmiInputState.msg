@@ -1,5 +1,5 @@
 string[] diagnostics
-int32 speed_setpoint
+float32 speed_setpoint
 float32 current_speed
 float32 voltage
 float32 motor_current_draw
